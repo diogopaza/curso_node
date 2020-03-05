@@ -7,11 +7,13 @@ Noticias.prototype.getNoticias = function(callback){
  }   
 
  Noticias.prototype.getNoticia = function(callback){
-    this._conn.query('SELECT * FROM noticias WHERE id_noticia = 1', callback);
+    //this._conn.query('SELECT * FROM noticias WHERE id_noticia = 1', callback);
+    console.log("to no salvar noticias")
+    this._conn.query('SELECT * FROM noticias', callback); 
 }
 
 Noticias.prototype.salvarNoticia = function(noticia, callback){
-    this._conn.query('INSERT INTO noticias set ?',noticia, callback);
+   this._conn.query('INSERT INTO noticias set ?',noticia, callback);
 }
 
 module.exports = function(){
