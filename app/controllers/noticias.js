@@ -9,16 +9,13 @@ module.exports.noticias = function(application,req,res){
     })   
 }
 module.exports.noticia = function(application,req,res){
-    console.log('noticia get')
     var connection = application.config.dbConnection();
     var NoticiasDAO = new application.app.models.NoticiasDAO(connection);
-    NoticiasDAO.getNoticia(connection, function(err, result){
+    var id_noticia = req.query;
+    NoticiasDAO.getNoticia(id_noticia,function(err, result){
         if(err){
-            console.log("deu erro no callback"); 
-            return res.status(500).send(err);
+           return res.status(500).send(err);
         }
-        console.log("to noticia"); 
-        //res.render('noticias/noticia', {noticia: result});
-        res.render('noticias/noticias', {noticias: result});
+        res.render('noticias/noticia', {noticia: result});        
     })  
 }
