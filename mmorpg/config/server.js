@@ -13,6 +13,8 @@ var expressValidator = require('express-validator');
 /* iniciar o objeto do express */
 var app = express();
 
+var expressSession = require('express-session')
+
 /* setar as variáveis 'view engine' e 'views' do express */
 app.set('view engine', 'ejs');
 app.set('views', './app/views');
@@ -25,6 +27,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 /* configurar o middleware express-validator */
 app.use(expressValidator());
+
+app.use(expressSession({
+	secret:'nossoSegredo',
+	resave:false,
+	saveUninitialized: false
+}))
 
 /* efetua o autoload das rotas, dos models e dos controllers para o objeto app */
 consign()
