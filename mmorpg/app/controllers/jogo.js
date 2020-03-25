@@ -10,6 +10,9 @@ module.exports.jogo = function(app, req, res){
     if(req.query.comando == 'B'){
         comando =  "B";
     }
+    if(req.query.comando == 'D'){
+        comando =  "D";
+    }
     var casa = req.session.casa;
     var connection = app.config.dbConnection;
     var JogoDAO = new app.app.models.JogoDAO(connection);
@@ -62,5 +65,11 @@ module.exports.ordenar_acao_sudito = function(app, req, res){
     dadosForm.usuario = req.session.usuario;
     JogoDAO.acao(dadosForm);  
     res.redirect('jogo?comando=B');
-
+}
+module.exports.revogar_acao = function(app, req, res){
+    var url_query = req.query;
+    var _id = url_query.id_acao; 
+    var connection = app.config.dbConnection;
+    var JogoDAO = new app.app.models.JogoDAO(connection);
+    JogoDAO.revogar_acao(_id,res);  
 }

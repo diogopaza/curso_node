@@ -26,9 +26,11 @@
 			</div>
 		</nav>
 		<div class="container">
-			<div id="msg">
+				
+			<div id="msg">							
 				<% if(comando == 'A') { %>
 					<div class="alert alert-danger" id="erro">
+							<strong><%=comando%></strong>
 						<strong>Operação inválida, verifique se todos os campos foram informados</strong>
 					</div>	
 				<%}%>
@@ -37,6 +39,16 @@
 						<strong>Ação realizada com sucesso!!</strong>
 					</div>	
 				<%}%>
+				<% if(comando == 'C') { %>					
+					<div class="alert alert-info" id="mensagem">
+						<strong>Ação finalizada com sucesso!!</strong>
+					</div>	
+				<%}%>
+				<% if(comando == 'D') { %>					
+					<div class="alert alert-info" id="mensagem">
+						<strong>Sua ordem foi revogada</strong>
+					</div>	
+				<%}%>					
 			</div>		
 			
 			<div class="row">
@@ -94,7 +106,7 @@
 					
 					<div class="col-sm-2">
 						<img src="images/outros/moeda.jpg" title="Moeda" alt="Moeda"/>
-						<span>25</span>
+						<span><%=jogo.moeda%></span>
 					</div>
 					
 				</div>
@@ -117,6 +129,8 @@
 				response.text()
 				.then(function(result){
 					acoes.innerHTML = result;
+					clearTimeout(timerId)
+					cronometro();
 				})
 				.catch(function(err){
 					console.log("Erro no fetch ", err)
@@ -129,14 +143,28 @@
 			.then(function(response){				
 				response.text()
 				.then(function(result){
-					acoes.innerHTML = result;
+					acoes.innerHTML = result;					
 				})
 				.catch(function(err){
 					console.log("Erro no fetch ", err)
 				})
 			})
 		})
+		timerId= null;
+		function cronometro(){
+			tempo_restante = document.getElementsByClassName("tempo_restante");
+			for(var i=0;i<tempo_restante.length;i++){
+				var segundos = tempo_restante[i].innerText
+				var segundos_atuais = 5;
+				var segundos_atuais = parseInt(segundos) - 1;
+				
+				if(segundos_atuais < 0){
+					window.location.href = "/jogo?msg=C"
+				}
+				tempo_restante[i].innerText = segundos_atuais;
+				timerId = setTimeout('cronometro()',1000);
+			} 
+		}
 
-		
 	</script>
 </html>
