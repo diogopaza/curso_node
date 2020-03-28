@@ -20,7 +20,7 @@ module.exports.jogo = function(app, req, res){
 }
 module.exports.sair = function(app, req, res){
     req.session.destroy( function(err){
-        res.render('index', {validacao:{} });
+        res.render('index', {validacao:{}, login:{} });
     });
    
 }

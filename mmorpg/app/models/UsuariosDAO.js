@@ -1,3 +1,5 @@
+crypto = require('crypto');
+
 function UsuariosDAO(connection){
     this._connection = connection();    
     dbname="gotTeste"
@@ -11,8 +13,9 @@ UsuariosDAO.prototype.inserirUsuario = function(usuario){
         if (err){
             console.log("erro local", err)            
             return
-        } 
-        console.log("Connected correctly to server");      
+        }        
+        var senhaCriptografada = crypto.createHash("md5").update(usuario.password).digest("hex");      
+        usuario.password = senhaCriptografada;
         const db = client.db(dbname);      
         db.collection('usuarios').insert(usuario, function(err,result){
             if(err){  
@@ -24,14 +27,14 @@ UsuariosDAO.prototype.inserirUsuario = function(usuario){
 }
 UsuariosDAO.prototype.autenticar = function(usuario,req,res){
     this._connection.connect(function(err, client) {
-        //assert.equal(null, err);
         if(err){
             console.log("ERRO")
             return 
         }
-        const db = client.db(dbname);  
+        const db = client.db(dbname); 
+        var senhaCriptografada = crypto.createHash("md5").update(usuario.password).digest("hex");      
         db.collection('usuarios').find({usuario: {$eq: usuario.usuario}, 
-            password: {$eq: usuario.password } }).toArray(function(err, result){
+            password: {$eq: senhaCriptografada } }).toArray(function(err, result){
             if(result[0] != undefined){
                 req.session.autorizado = true;
                 req.session.usuario = result[0].usuario;
@@ -40,7 +43,10 @@ UsuariosDAO.prototype.autenticar = function(usuario,req,res){
             if(req.session.autorizado){
                 res.redirect("jogo");
             }else{
-                res.render("index",{validacao:{}});
+                login = 'A';
+                res.render('index', {validacao:{}, dadosForm: usuario, login: login});
+                //res.redirect('/?login=A');                
+                //res.render("index",validacao=validacao);
             }        
         })          
         client.close();    

@@ -5,4 +5,7 @@ module.exports = function(app){
     app.post('/cadastrar', function(req,res){
         app.app.controllers.cadastro.cadastrar(app,req,res);
     })
+    app.get('/cadastroConfirmado', function(req,res){
+        app.app.controllers.cadastro.cadastro(app,req,res);
+    })
 }

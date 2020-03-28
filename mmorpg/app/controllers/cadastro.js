@@ -20,5 +20,8 @@ module.exports.cadastrar = function(app,req,res){
     var JogoDAO = new app.app.models.JogoDAO(connection);
     UsuariosDAO.inserirUsuario(dadosForm);
     JogoDAO.gerarParametros(dadosForm.usuario);
-    res.send("Usuario inserido com sucesso");
+    res.render("cadastroConfirmado");
+}
+module.exports.cadastroConfirmado = function(app,req,res){
+    res.send('cadastroConfirmado')
 }
