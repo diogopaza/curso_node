@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html lang="pt-br">
+
+<head>
+	<meta charset="UTF-8">
+
+	<title>Instagram Clone - WEB</title>
+
+	<!-- JQuery -->
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+	<!-- bootstrap - link cdn -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+	<!-- incluindo css -->
+	<link href="css/style.css" rel="stylesheet">
+
+	<script>
+		$(document).ready(function () {
+
+			$('#btn_incluir').click(function () {
+				$('#container_timeline').hide();
+				$('#container_form').show();
+			});
+
+			$('#btn-cancelar-publicacao').click(function () {
+				$('#container_timeline').show();
+				$('#container_form').hide();
+				return false;
+			});
+
+		});
+	</script>
+
+</head>
+
+<body>
+
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="col-md-12">
+				<div class="container-fluid">
+					<img alt="Instagram Clone - Versão WEB" src="images/logo2.jpg" class="logo2">
+					<img alt="Incluir" src="images/incluir.jpg" class="pull-right btn-incluir" id="btn_incluir">
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+		<div class="col-md-2"></div>
+		<div class="col-md-8" id="container_timeline"></div>
+
+	</div>
+
+
+	<div class="container" style="display:none" id="container_form">
+		<div class="panel panel-default">
+
+			<div class="panel-heading">
+				<h4>Publicar uma foto</h4>
+			</div>
+
+			<div class="panel-body">
+				<div class="form-group">
+					<input type="file" name="arquivo" id="arquivo" class="form-control">
+				</div>
+
+				<div class="form-group">
+					<input type="text" name="titulo" id="titulo" class="form-control" placeholder="Titulo"
+						autocomplete="off">
+				</div>
+
+				<div class="form-group">
+					<button class="btn btn-success" id="btn-publicar">Publicar</button>
+					<button class="btn btn-danger" id="btn-cancelar-publicacao">Cancelar</button>
+					<button class="btn btn-danger btn-teste" id="btn-cancelar-publicacao">teste</button>
+					<button class="btn btn-danger btn-teste" id="btn-cancelar-publicacao">teste22</button>
+				</div>
+				<div id="mensagem"></div>
+			</div>
+		</div>
+		<script>
+			let result = "";
+			let comentarios = [];
+			document.getElementById("btn-publicar").addEventListener("click", () => {
+				var arquivo = document.getElementById("arquivo").files[0];
+				var titulo = document.getElementById("titulo").value;
+				formData = new FormData();
+				formData.append("arquivo", arquivo);
+				formData.append("titulo", titulo);
+
+				url = "http://localhost:3000/api";
+
+				fetch(url,
+					{
+						method: "post",
+						body: formData
+
+					})
+					.then((response) => {
+						return response.text();
+					})
+					.then((data) => {
+						document.getElementById("mensagem").innerHTML = data;
+					})
+					.catch(error => console.log(error))
+
+			})
+
+			function carrega_postagens() {
+				url = "http://localhost:3000/api";
+				let comentarios = [];
+				fetch(url).then((response) => {
+					if (response.ok) {
+						response.json().then((data) => {
+							content = document.getElementById("container_timeline");
+							for (var posicao in data) {
+								content.innerHTML +=
+									'<div class="publicacao">' +
+									'<span class="titulo">' + data[posicao].titulo +
+									'</span>' +
+									'<img' +
+									' src="http://localhost:3000/imagens/' + data[posicao].url_imagem + '" />' +
+									'<div class="comentar">' +
+									'<input type="text" id="postagem_' + data[posicao]._id + '" class="form-control input_comentario" placeholer="Adicione um comentário">' +
+									'<button class="btn btn-default btn_postagem" type="button" value="' + data[posicao]._id + '">Comentar</button>' +
+									'</div>' +
+									'</div>';
+
+							}
+							btn_postagem = document.getElementsByClassName("btn_postagem");
+							for (var i = 0; i < btn_postagem.length; i++) {
+								btn_postagem[i].addEventListener("click", (event) => {
+									id_input = "postagem_" + event.srcElement.value;
+									texto = document.getElementById(id_input).value;
+									alert(texto);
+								})
+							}
+						}).catch((err) => {
+							console.log(err)
+						})
+					}
+				})
+					.catch(error => console.log(error))
+			}
+			carrega_postagens();
+		</script>
+</body>
+
+</html>
