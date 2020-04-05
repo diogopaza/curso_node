@@ -130,11 +130,28 @@
 
 							}
 							btn_postagem = document.getElementsByClassName("btn_postagem");
+
 							for (var i = 0; i < btn_postagem.length; i++) {
 								btn_postagem[i].addEventListener("click", (event) => {
+									id_btn = event.srcElement.value;
 									id_input = "postagem_" + event.srcElement.value;
-									texto = document.getElementById(id_input).value;
-									alert(texto);
+									comentario = document.getElementById(id_input).value;
+									url = "http://localhost:3000/api/" + id_btn;
+									console.log("indo", url);
+									fetch(url, {
+										method: "put",
+										body: JSON.stringify({ comentario: comentario }),
+										//body:  {name:"oioioio"},
+										headers: {											
+											"Content-Type": "application/json"
+										},
+									}).then((response) => {
+										response.text(response)
+											.then((result) => {
+												console.log(result)
+											})
+									})
+
 								})
 							}
 						}).catch((err) => {

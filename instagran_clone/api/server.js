@@ -114,7 +114,7 @@ app.get('/api/:id', (req, res) => {
         }
         console.log("Connected correctly to server");
         const db = client.db(dbname);
-        db.collection('postagens').find(_id).toArray(function (err, result) {
+        db.collection('postagens3').find(_id).toArray(function (err, result) {
             if (err) {
                 res.json(err)
             } else {
@@ -139,6 +139,10 @@ app.get('/imagens/:imagem', (req, res) => {
 
 app.put('/api/:id', (req, res) => {
     _id = ObjectID(req.params.id)
+    dados = req.body.comentario;
+    //var dados = JSON.parse(req.body)
+    console.log("comentario", dados);
+    console.log("id", _id);
     mongoDB().connect(function (err, client) {
         if (err) {
             console.log("erro local", err)
@@ -146,6 +150,8 @@ app.put('/api/:id', (req, res) => {
         }
         console.log("Connected correctly to server");
         const db = client.db(dbname);
+        res.send(dbname);
+        /*
         db.collection('postagens').update(
             { _id },
             { $set: { titulo: req.body.titulo, url_img: req.body.url_img } },
@@ -157,7 +163,7 @@ app.put('/api/:id', (req, res) => {
                 }
                 client.close();
             }
-        )
+        )*/
     })
 
 })
