@@ -139,10 +139,6 @@ app.get('/imagens/:imagem', (req, res) => {
 
 app.put('/api/:id', (req, res) => {
     _id = ObjectID(req.params.id)
-    dados = req.body.comentario;
-    //var dados = JSON.parse(req.body)
-    console.log("comentario", dados);
-    console.log("id", _id);
     mongoDB().connect(function (err, client) {
         if (err) {
             console.log("erro local", err)
@@ -150,11 +146,16 @@ app.put('/api/:id', (req, res) => {
         }
         console.log("Connected correctly to server");
         const db = client.db(dbname);
-        res.send(dbname);
-        /*
-        db.collection('postagens').update(
+        db.collection('postagens3').update(
             { _id },
-            { $set: { titulo: req.body.titulo, url_img: req.body.url_img } },
+            {
+                $push: {
+                    comentarios: {
+                        id_comentario: new ObjectID(),
+                        comentario: req.body.comentario
+                    }
+                }
+            },
             (err, result) => {
                 if (err) {
                     res.json(err)
@@ -163,11 +164,13 @@ app.put('/api/:id', (req, res) => {
                 }
                 client.close();
             }
-        )*/
+        )
     })
 
 })
 app.delete('/api/:id', (req, res) => {
+    //res.status(200).json(req.params.id);
+
     _id = ObjectID(req.params.id);
     mongoDB().connect(function (err, client) {
         if (err) {
@@ -176,14 +179,24 @@ app.delete('/api/:id', (req, res) => {
         }
         console.log("Connected correctly to server");
         const db = client.db(dbname);
-        db.collection('postagens').remove({ _id }, function (err, result) {
-            if (err) {
-                res.json(err)
-            } else {
-                res.json(result);
-            }
-            client.close();
-        })
+        db.collection('postagens3').update(
+            { },
+            {
+                $pull:{
+                    comentarios:{id_comentario : _id}
+                }
+            },
+            {
+                multi:true
+            },
+            function (err, result) {
+                if (err) {
+                    res.json(err)
+                } else {
+                    res.status(200).json(result);
+                }
+                client.close();
+            })
     })
 
 })
